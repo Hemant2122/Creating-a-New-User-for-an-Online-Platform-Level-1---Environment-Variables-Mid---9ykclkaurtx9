@@ -11,6 +11,27 @@ const userDetails = JSON.parse(
 app.use(express.json());
 
 // Write POST endpoint for registering new user
+app.post("/api/v1/details", (req, res) => {
+  const newId = userDetails[userDetails.length - 1].id + 1;
+  const { name, mail, number } = req.body;
+  const newUser = { id: newId, name,  mail, number };
+  userDetails.push(newUser);
+  fs.writeFile(
+    `${__dirname}/data/userDetails.json`,
+    JSON.stringify(userDetails),
+    (err) => {
+      res.statusCode = 201;
+      const output = {
+        status: "Success",
+        message: "User registered successfully",
+        data: {
+          newProduct: newUser,
+        }
+      }
+      res.send(output);
+    }
+  )
+});
 
 // GET endpoint for sending the details of users
 app.get("/api/v1/details", (req, res) => {
